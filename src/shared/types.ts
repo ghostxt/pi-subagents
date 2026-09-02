@@ -2452,7 +2452,7 @@ export interface ProactiveSkillSubagentsConfig {
 	preferredAgent?: string;
 }
 
-export type ToolDescriptionMode = "full" | "compact" | "custom";
+export type ToolDescriptionMode = "full" | "compact" | "minimal" | "custom";
 export type InlineToolDisplay = "rich" | "summary";
 
 export interface ScheduledRunsConfig {

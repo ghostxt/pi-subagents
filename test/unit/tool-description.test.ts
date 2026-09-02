@@ -11,6 +11,7 @@ import {
 	COMPACT_SUBAGENT_TOOL_DESCRIPTION,
 	DEFAULT_SUBAGENT_TOOL_DESCRIPTION,
 	FULL_SUBAGENT_TOOL_DESCRIPTION,
+	MINIMAL_SUBAGENT_TOOL_DESCRIPTION,
 	SUBAGENT_SAFETY_GUIDANCE,
 	SUBAGENT_TOOL_PROMPT_GUIDELINES,
 	SUBAGENT_TOOL_PROMPT_SNIPPET,
@@ -139,6 +140,13 @@ describe("registered subagent tool description", () => {
 		assert.ok(description.length < FULL_SUBAGENT_TOOL_DESCRIPTION.length);
 	});
 
+	it("offers a minimal mode with all non-essential descriptions stripped", () => {
+		const description = buildSubagentToolDescription({ toolDescriptionMode: "minimal" });
+		assert.equal(description, MINIMAL_SUBAGENT_TOOL_DESCRIPTION);
+		assert.equal(buildSubagentToolPromptMetadata({ toolDescriptionMode: "minimal" }).promptSnippet, undefined);
+		assert.equal(description, "Delegate to configured subagents.");
+	});
+
 	it("renders a custom project description with placeholders and mandatory safety guidance", () => {
 		const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "pi-subagents-tool-desc-project-"));
 		const agentDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-subagents-tool-desc-agent-"));
@@ -242,7 +250,7 @@ describe("registered subagent tool description", () => {
 		);
 
 		assert.equal(description, FULL_SUBAGENT_TOOL_DESCRIPTION);
-		assert.ok(warnings.some((message) => message.includes("Ignoring invalid toolDescriptionMode")));
+		assert.ok(warnings.some((message) => message.includes("expected \"full\", \"compact\", \"minimal\", or \"custom\"")));
 	});
 
 	function readRegisteredTool(agentDir: string): { description: string; promptSnippet?: string; promptGuidelines?: string[]; properties: string[] } {
@@ -310,6 +318,13 @@ describe("registered subagent tool description", () => {
 		assert.equal(compactTool.description, COMPACT_SUBAGENT_TOOL_DESCRIPTION);
 		assert.equal(compactTool.promptSnippet, undefined);
 		assert.equal(compactTool.promptGuidelines, undefined);
+
+		const minimalAgentDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-subagents-tool-desc-minimal-"));
+		writeExtensionConfig(minimalAgentDir, { toolDescriptionMode: "minimal" });
+		const minimalTool = readRegisteredTool(minimalAgentDir);
+		assert.equal(minimalTool.description, MINIMAL_SUBAGENT_TOOL_DESCRIPTION);
+		assert.equal(minimalTool.promptSnippet, undefined);
+		assert.equal(minimalTool.promptGuidelines, undefined);
 
 		const customAgentDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-subagents-tool-desc-custom-"));
 		writeExtensionConfig(customAgentDir, { toolDescriptionMode: "custom" });

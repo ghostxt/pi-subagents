@@ -50,7 +50,7 @@ Controls the duration, in milliseconds, for model exclusions. The default is `86
 { "toolDescriptionMode": "compact" }
 ```
 
-Controls the parent-facing `subagent` tool description registered at startup. The default registers split prompt metadata: a short tool description plus `promptSnippet` and `promptGuidelines`. Set `"full"` to register the complete description as one tool description, or `"compact"` to keep the execution modes, async/`bg_wait` guidance, child-safety boundary, management/action split, one-writer review guidance, and artifact/status essentials with less prompt bloat.
+Controls the parent-facing `subagent` tool description registered at startup. The default registers split prompt metadata: a short tool description plus `promptSnippet` and `promptGuidelines`. Set `"full"` to register the complete description as one tool description, `"compact"` to keep the execution modes, async/`bg_wait` guidance, child-safety boundary, management/action split, one-writer review guidance, and artifact/status essentials with less prompt bloat, or `"minimal"` to strip all non-essential guidance and register only `"Delegate to configured subagents."` without prompt metadata.
 
 `custom` reads `subagent-tool-description.md` from the project config directory, then from `~/.pi/agent/subagent-tool-description.md`. Missing, empty, unreadable, or oversized custom files fall back to the full description. Custom templates may use `{{fullDescription}}`, `{{compactDescription}}`, `{{safetyGuidance}}`, `{{agentDir}}`, and `{{projectConfigDir}}`; the safety guidance is always present so custom prose cannot remove the runtime guardrails. Restart Pi after changing the mode or custom file.
 

@@ -89,9 +89,11 @@ ASYNC / SAFETY:
 • Oracle/advisor consultations use available supervisor dialogue for material unknowns; request one-shot when desired.
 • Status and artifacts live under asyncId/asyncDir with status.json, events.jsonl, output logs, and {action:"status",id:"..."}.`;
 
+export const MINIMAL_SUBAGENT_TOOL_DESCRIPTION = "Delegate to configured subagents.";
+
 
 function isToolDescriptionMode(value: unknown): value is ToolDescriptionMode {
-	return value === "full" || value === "compact" || value === "custom";
+	return value === "full" || value === "compact" || value === "minimal" || value === "custom";
 }
 
 function warn(options: ToolDescriptionOptions | undefined, message: string): void {
@@ -121,7 +123,7 @@ export function resolveToolDescriptionMode(config: Pick<ExtensionConfig, "toolDe
 	const mode = config.toolDescriptionMode;
 	if (mode === undefined) return "full";
 	if (isToolDescriptionMode(mode)) return mode;
-	warn(options, `Ignoring invalid toolDescriptionMode ${JSON.stringify(mode)}; expected "full", "compact", or "custom".`);
+	warn(options, `Ignoring invalid toolDescriptionMode ${JSON.stringify(mode)}; expected "full", "compact", "minimal", or "custom".`);
 	return "full";
 }
 
@@ -209,6 +211,7 @@ export function buildSubagentToolDescription(config: Pick<ExtensionConfig, "tool
 	const mode = resolveToolDescriptionMode(config, options);
 	let description: string;
 	if (mode === "compact") description = COMPACT_SUBAGENT_TOOL_DESCRIPTION;
+	else if (mode === "minimal") description = MINIMAL_SUBAGENT_TOOL_DESCRIPTION;
 	else if (mode === "custom") {
 		const custom = loadCustomToolDescription(options);
 		if (custom) description = withMandatorySafetyGuidance(custom);
